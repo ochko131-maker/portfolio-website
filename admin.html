@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="mn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Админ Панел</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-box {
+            padding: 50px 10%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #161618;
+            border-radius: 20px;
+            margin-top: 50px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #0b0b0d;
+            color: white;
+            border: 1px solid #333;
+            border-radius: 10px;
+        }
+
+        label {
+            color: #ff8a00;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-box">
+        <h2 class="gradient-text">Вэбсайт удирдах</h2>
+
+        <label>Hero Subtitle:</label>
+        <input type="text" id="edit-hero-subtitle">
+
+        <label>About Title:</label>
+        <input type="text" id="edit-about-title">
+
+        <label>About Content (HTML ашиглаж болно):</label>
+        <textarea id="edit-about-content" rows="10"></textarea>
+
+        <button onclick="updateWebsite()" class="main-btn"
+            style="width: 100%; border: none; cursor: pointer;">Шинэчлэх</button>
+        <p><a href="index.html" style="color: #888;">Вэбсайт руу буцах</a></p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDA8N85uogv1-bWsgk6CMNDRywJnACrw2k",
+            databaseURL: "https://ochko-portfolio-default-rtdb.firebaseio.com",
+            projectId: "ochko-portfolio"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Одоо байгаа өгөгдлийг талбарт бөглөх
+        db.ref('portfolio_data').once('value').then((snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById('edit-hero-subtitle').value = data.heroSubtitle || "";
+                document.getElementById('edit-about-title').value = data.aboutTitle || "";
+                document.getElementById('edit-about-content').value = data.aboutContent || "";
+            }
+        });
+
+        function updateWebsite() {
+            const subtitle = document.getElementById('edit-hero-subtitle').value;
+            const title = document.getElementById('edit-about-title').value;
+            const content = document.getElementById('edit-about-content').value;
+
+            db.ref('portfolio_data').set({
+                heroSubtitle: subtitle,
+                aboutTitle: title,
+                aboutContent: content
+            }).then(() => alert("Амжилттай шинэчлэгдлээ!"));
+        }
+    </script>
+</body>
+
+</html>
